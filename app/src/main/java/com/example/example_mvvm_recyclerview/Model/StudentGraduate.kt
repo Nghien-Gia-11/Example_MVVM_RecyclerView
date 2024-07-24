@@ -1,6 +1,6 @@
 package com.example.example_mvvm_recyclerview.Model
 
-data class StudentGraduate(
+data class StudentGraduate( // học sinh đã tốt nghiệp
     val id : Int,
     val name : String,
     val address : String,
