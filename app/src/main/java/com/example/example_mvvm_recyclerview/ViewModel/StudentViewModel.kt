@@ -2,21 +2,23 @@ package com.example.example_mvvm_recyclerview.ViewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.example_mvvm_recyclerview.Model.StudentGraduate
 import com.example.example_mvvm_recyclerview.Model.StudentUnderGraduate
 
 class StudentViewModel() : ViewModel() {
 
-    private var _listStudent = MutableLiveData<List<Any>>()
-    private val listStudent : LiveData<List<Any>> get() = _listStudent
+    private var _listStudent = MutableLiveData<MutableList<Any>>()
+    val listStudent: LiveData<MutableList<Any>> get() = _listStudent
 
     init {
         _listStudent.value = addStudent()
     }
 
 
-    private fun addStudent() : List<Any>{
+    private fun addStudent(): MutableList<Any> {
         val list = mutableListOf<Any>()
         list.add(StudentGraduate(1, "Android_01", "HN", 3.2f, "giỏi", 4.5f))
         list.add(StudentUnderGraduate(7, "Android_07", "HD", "9A"))
@@ -31,6 +33,22 @@ class StudentViewModel() : ViewModel() {
         list.add(StudentGraduate(6, "Android_06", "HD", 2.8f, "khá", 4.5f))
         list.add(StudentUnderGraduate(8, "Android_08", "HD", "9B"))
         return list
+    }
+
+    fun loadMore() {
+        val list = mutableListOf<Any>()
+        val currentSize = _listStudent.value?.size ?: 0
+        for (i in currentSize..currentSize + 20) {
+            list.add(StudentUnderGraduate(i, "Android_0$i", "HD", "9B"))
+        }
+        _listStudent.value?.addAll(list)
+        _listStudent.value = _listStudent.value
+    }
+
+    fun refreshData(){
+        _listStudent.value?.clear()
+        _listStudent.value = _listStudent.value
+        loadMore()
     }
 
 }
