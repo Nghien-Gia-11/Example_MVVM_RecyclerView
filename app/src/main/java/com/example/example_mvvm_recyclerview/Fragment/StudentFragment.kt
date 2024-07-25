@@ -21,7 +21,7 @@ class StudentFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: StudentViewModel by viewModels()
-
+    private val adapter by lazy { StudentAdapter(listOf()) }
     private var isLoading = false
 
     override fun onCreateView(
@@ -34,32 +34,37 @@ class StudentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initAdapter()
+        binding.swipeRefreshLayout.isRefreshing = false
         viewModel.listStudent.observe(viewLifecycleOwner) { item ->
-            binding.rvStudent.apply {
-                adapter = StudentAdapter(item)
-                layoutManager = LinearLayoutManager(context)
-                addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-                        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                        val visibleItemCount = layoutManager.childCount
-                        val totalItemCount = layoutManager.itemCount
-                        val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
-                        if (!isLoading && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                            isLoading = true
-                            viewModel.loadMore()
-                        } else {
-                            isLoading = false
-                        }
-                    }
-                })
-            }
-            binding.swipeRefreshLayout.isRefreshing = false
+           adapter.update(item)
+            adapter.notifyDataSetChanged()
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshData()
+        }
+    }
+
+    private fun initAdapter() {
+        binding.rvStudent.apply {
+            adapter = this@StudentFragment.adapter
+            layoutManager = LinearLayoutManager(context)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val visibleItemCount = layoutManager.childCount
+                    val totalItemCount = layoutManager.itemCount
+                    val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
+                    if (!isLoading && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                        isLoading = true
+                        viewModel.loadMore()
+                    } else {
+                        isLoading = false
+                    }
+                }
+            })
         }
     }
 

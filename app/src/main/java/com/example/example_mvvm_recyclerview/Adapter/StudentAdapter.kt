@@ -8,7 +8,7 @@ import com.example.example_mvvm_recyclerview.Model.StudentUnderGraduate
 import com.example.example_mvvm_recyclerview.databinding.LayoutItemStudentGraduateBinding
 import com.example.example_mvvm_recyclerview.databinding.LayoutItemStudentUndergraduateBinding
 
-class StudentAdapter(private val listStudent: List<Any>) :
+class StudentAdapter(private var listStudent: List<Any>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -50,6 +50,7 @@ class StudentAdapter(private val listStudent: List<Any>) :
 
     inner class GraduateViewHolder(private val binding: LayoutItemStudentGraduateBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(student: StudentGraduate) {
             binding.txtName.text = student.name
             binding.txtAddress.text = student.address
@@ -76,4 +77,7 @@ class StudentAdapter(private val listStudent: List<Any>) :
     }
 
     override fun getItemCount(): Int = listStudent.size
+    fun update(item: MutableList<Any>){
+        listStudent = item
+    }
 }

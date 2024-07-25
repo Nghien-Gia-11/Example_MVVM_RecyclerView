@@ -36,11 +36,15 @@ class StudentViewModel() : ViewModel() {
     }
 
     fun loadMore() {
+        val list = mutableListOf<Any>()
+        listStudent.value?.let {
+            list.addAll(it)
+        }
         val currentSize = _listStudent.value?.size ?: 0
         for (i in currentSize..currentSize + 20) {
-            _listStudent.value?.add((StudentUnderGraduate(i, "Android_0$i", "HD", "9B")))
+            list.add(StudentUnderGraduate(i, "Android_0$i", "HD", "9B"))
         }
-        _listStudent.value = _listStudent.value
+        _listStudent.value = list
     }
 
     fun refreshData(){
